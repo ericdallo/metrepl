@@ -2,16 +2,23 @@
   (:require
    [metrepl.exporters :as exporters]))
 
+(defn ^:private msg->payload [{:keys [op] :as msg}]
+  (merge {:op op}
+         (case op
+           "load-file" (select-keys msg [:file-name :file-path])
+           "eval" (select-keys msg [:ns])
+           nil)))
+
 (defn metrify [metric content]
   (exporters/export! {:metric metric
                       :payload content}))
 
-(defn metrify-op-task [op op-fn]
-  (exporters/export! {:metric :event/op-requested
-                      :payload {:op op}})
-  (let [start-time (System/currentTimeMillis)
-        _ (op-fn)
+(defn metrify-op-task [msg handle-op-fn]
+  (let [payload (msg->payload msg)
+        _ (exporters/export! {:metric :event/op-requested
+                              :payload payload})
+        start-time (System/currentTimeMillis)
+        _ (handle-op-fn)
         end-time (- (System/currentTimeMillis) start-time)]
     (exporters/export! {:metric :event/op-completed
-                        :payload {:op op
-                                  :time-ms end-time}})))
+                        :payload (assoc payload :time-ms end-time)})))
