@@ -1,0 +1,18 @@
+/.idea
+.nrepl-port
+target/
+.lsp/*
+!.lsp/config.edn
+.clj-kondo/*
+!/.clj-kondo/config.edn
+/.DS_Store
+/.cpcache
+.calva
+/*.jar
+
+/.classpath
+/.project
+/.settings/
+
+# emacs
+*~

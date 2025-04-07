@@ -1,0 +1,5 @@
+{:stdout {:enabled? true
+          :format (:summary :edn :json)}
+ :file {:enabled? false
+        :path "./metrepl.txt"
+        :format (:summary :edn :json)}}
