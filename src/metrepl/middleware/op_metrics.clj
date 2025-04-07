@@ -18,7 +18,10 @@
    {:uptime-ms startup-jvm-uptime}))
 
 (defn wrap-op-metrics
-  "TODO ..."
+  "Wrap all ops metrifying each one, emmiting these events:
+   - `:event/first-op-requested` when receiving the first op.
+   - `:event/op-requested` when receiving any op.
+   - `:event/op-completed` after completing an op."
   [handler]
   (fn [msg]
     (when-not @first-op-metrified?*
@@ -31,7 +34,7 @@
      (fn [] (handler msg)))))
 
 (middleware/set-descriptor!
-  #'wrap-op-metrics
-  {:doc "TODO"
-   :expects #{#'nrepl.middleware.session/session}
-   :handles {}})
+ #'wrap-op-metrics
+ {:doc (:doc (meta #'wrap-op-metrics))
+  :expects #{#'nrepl.middleware.session/session}
+  :handles {}})
