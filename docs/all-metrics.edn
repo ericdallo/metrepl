@@ -1,5 +1,9 @@
 {:event/jvm-started {:uptime-ms Long}
  :event/first-op-requested {:op String}
- :event/op-requested {:op String}
+ :event/op-requested {:op String
+                      ,,, ;; extra fields for some ops
+                      }
  :event/op-completed {:op String
-                      :time-ms Long}}
+                      :time-ms Long
+                      ,,, ;; extra fields for some ops
+                      }}
