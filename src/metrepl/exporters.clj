@@ -2,9 +2,12 @@
   (:require
    [metrepl.config :as config]
    [metrepl.exporters.file :as exporters.file]
+   [metrepl.exporters.otlp :as exporters.otlp]
    [metrepl.exporters.stdout :as exporters.stdout])
   (:import
    [java.time Instant]))
+
+(defonce ^:private correlation-id (str (random-uuid)))
 
 (defn ^:private system-data* []
   {:os-name (System/getProperty "os.name")
@@ -17,10 +20,11 @@
 
 (defn ^:private enhance-data [data metric-cfg]
   (merge
+   (system-data)
    (assoc data
+          :correlation-id correlation-id
           :timestamp (Instant/now)
-          :level (:level metric-cfg))
-   (system-data)))
+          :level (:level metric-cfg))))
 
 (defn ^:private export!* [metric data]
   (let [metric-cfg (config/metric metric)
@@ -31,10 +35,11 @@
           (case exporter
             :stdout (exporters.stdout/export! data metric-cfg exporter-cfg)
             :file (exporters.file/export! data metric-cfg exporter-cfg)
+            :otlp (exporters.otlp/export! data metric-cfg exporter-cfg)
             nil))))))
 
 (defn export! [{:keys [metric] :as data}]
   (try
     (export!* metric data)
     (catch Exception e
-      (println (.printStacktrace e)))))
+      (.printStackTrace e))))

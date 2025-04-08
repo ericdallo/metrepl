@@ -22,7 +22,9 @@
                         :format :summary}
                :file {:enabled? false
                       :path "./metrepl.txt"
-                      :format :summary}}})
+                      :format :summary}
+               :otlp {:enabled? false
+                      :config {"otel.service.name" "metrepl"}}}})
 
 (defn safe-read-edn-string [raw-string]
   (try
@@ -53,9 +55,15 @@
 
 (def ^:private config-from-file (memoize config-from-file*))
 
+(defn deep-merge [& maps]
+  (apply merge-with (fn [& args]
+                      (if (every? #(or (map? %) (nil? %)) args)
+                        (apply deep-merge args)
+                        (last args)))
+         maps))
+
 (defn all []
-  (merge-with merge
-              initial-config
+  (deep-merge initial-config
               (config-from-classpath)
               (config-from-envvar)
               (config-from-file)
