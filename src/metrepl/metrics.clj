@@ -5,6 +5,7 @@
 (defn ^:private msg->payload [{:keys [op] :as msg}]
   (merge {:op op}
          (case op
+           "clone" (select-keys msg [:client-name :client-version])
            "load-file" (select-keys msg [:file-name :file-path])
            "eval" (select-keys msg [:ns])
            nil)))

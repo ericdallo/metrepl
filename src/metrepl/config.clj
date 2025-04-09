@@ -1,5 +1,5 @@
 (ns metrepl.config
-  "Waterfall of ways to get metrepl config, merging from top to bottom:
+  "Waterfall of ways to get metrepl config, deep merging from top to bottom:
 
   1. base: fixed config var `metrepl.config/initial-config`.
   2. classpath: searching for a `metrepl.exports/config.edn` file in the current classpath.
