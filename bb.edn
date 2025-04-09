@@ -1,0 +1,4 @@
+{:paths ["scripts"]
+ :tasks {tag ci/tag
+         install ci/install
+         deploy ci/deploy}}
