@@ -19,6 +19,7 @@
                 :lib lib
                 :basis (b/create-basis basis)
                 :version version})
+  (b/copy-file {:src (str class-dir "/META-INF/maven/" lib "/pom.xml") :target "pom.xml"})
   (b/copy-dir {:src-dirs ["src"]
                :target-dir class-dir})
   (b/jar {:class-dir class-dir
@@ -38,5 +39,5 @@
   ((requiring-resolve 'deps-deploy.deps-deploy/deploy)
    (merge {:installer :remote
            :artifact jar-file
-           :pom-file (str class-dir "/META-INF/maven/" lib "/pom.xml")}
+           :pom-file "pom.xml"}
           opts)))
