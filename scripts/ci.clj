@@ -10,7 +10,7 @@
 
 (defn ^:private add-changelog-entry [tag comment]
   (replace-in-file "CHANGELOG.md"
-                   #"## \[Unreleased\]"
+                   #"## Unreleased"
                    (if comment
                      (format "## [Unreleased]\n\n## %s\n\n- %s" tag comment)
                      (format "## [Unreleased]\n\n## %s" tag))))
