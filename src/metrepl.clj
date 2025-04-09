@@ -1,7 +1,7 @@
 (ns metrepl
   (:require
-   [metrepl.middleware.op-metrics :as middleware.load-file-metrics]))
+   [metrepl.middleware.op-metrics]))
 
 (def middleware (mapv
                  symbol
-                 [#'middleware.load-file-metrics/wrap-op-metrics]))
+                 [#'metrepl.middleware.op-metrics/wrap-op-metrics]))
