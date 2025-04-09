@@ -18,7 +18,7 @@
              :event/first-op-requested {:level :info}
              :event/op-requested {:level :info}
              :event/op-completed {:level :info}}
-   :exporters {:stdout {:enabled? true
+   :exporters {:stdout {:enabled? false
                         :format :summary}
                :file {:enabled? false
                       :path "./metrepl.txt"

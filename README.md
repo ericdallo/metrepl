@@ -19,9 +19,13 @@ For all available metrics, check [here](./docs/all-metrics.edn).
 
 ### Exporters
 
+Available exporters:
+
 - `stdout`: Export the metric to current nREPL process stdout, useful for debugging.
 - `file`: Export the metric to a file, appending each metric in a new line.
 - `otlp`: Export the metric via [OpenTelemetry](https://opentelemetry.io/) to what user configured.
+
+By default no exporter is enabled, you need to manually configure which one(s) you want to enable, example: `{:exporters {:stdout {:enabled? true}}}`.
 
 For all available exporters and their configs, check [here](./docs/all-exporters.edn).
 
