@@ -15,19 +15,23 @@
                      (format "## [Unreleased]\n\n## %s\n\n- %s" tag comment)
                      (format "## [Unreleased]\n\n## %s" tag))))
 
+(defn jar []
+  (shell "clojure -T:build jar"))
+
+(defn install []
+  (shell "clojure -T:build install"))
+
 (defn tag [& [tag]]
   (shell "git fetch origin")
   (shell "git pull origin HEAD")
   (spit "resources/METREPL_VERSION" tag)
   (add-changelog-entry tag nil)
-  (shell "git add resources/METREPL_VERSION CHANGELOG.md")
+  (jar)
+  (shell "git add pom.xml resources/METREPL_VERSION CHANGELOG.md")
   (shell (format "git commit -m \"Release: %s\"" tag))
   (shell (str "git tag " tag))
   (shell "git push origin HEAD")
   (shell "git push origin --tags"))
-
-(defn install []
-  (shell "clojure -T:build install"))
 
 (defn deploy-clojars []
   (shell "clojure -T:build deploy-clojars"))
