@@ -4,7 +4,7 @@
    [clojure.string :as string]
    [clojure.tools.build.api :as b]))
 
-(def lib 'com.github.ericdallo/metrepl)
+(def lib 'dev.ericdallo/metrepl)
 (def version (string/trim (slurp (io/resource "METREPL_VERSION"))))
 (def class-dir "target/classes")
 (def jar-file (format "target/%s-%s.jar" lib version))
@@ -32,3 +32,11 @@
               :version version
               :jar-file jar-file
               :class-dir class-dir}))
+
+(defn deploy-clojars [opts]
+  (jar opts)
+  ((requiring-resolve 'deps-deploy.deps-deploy/deploy)
+   (merge {:installer :remote
+           :artifact jar-file
+           :pom-file (str class-dir "/META-INF/maven/" lib "/pom.xml")}
+          opts)))

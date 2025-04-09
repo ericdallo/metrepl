@@ -8,6 +8,7 @@
            :test {:extra-paths ["test"]
                   :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
                   :main-opts ["-m" "kaocha.runner"]}
-           :build {:deps {io.github.clojure/tools.build {:tag "v0.10.7" :sha "573711e"}}
+           :build {:deps {io.github.clojure/tools.build {:tag "v0.10.7" :sha "573711e"}
+                          slipset/deps-deploy {:mvn/version "0.2.2"}}
                    :extra-paths ["resources"]
                    :ns-default build}}}

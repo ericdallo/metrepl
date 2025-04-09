@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - "!*"
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  deploy-clojars:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Clojure and Babashka
+        uses: DeLaGuardo/setup-clojure@13.2
+        with:
+          cli: 1.12.0.1530
+          bb: 1.12.196
+
+      - name: Deploy Clojars
+        env:
+          CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
+          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_PASSWORD }}
+        run: bb deploy-clojars

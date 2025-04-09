@@ -25,3 +25,9 @@
   (shell (str "git tag " tag))
   (shell "git push origin HEAD")
   (shell "git push origin --tags"))
+
+(defn install []
+  (shell "clojure -T:build install"))
+
+(defn deploy-clojars []
+  (shell "clojure -T:build deploy-clojars"))
