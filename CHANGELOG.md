@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
-## 0.1.1
+- Improve export exception handler
+- Remove jvm started flaky metric
+
+## 0.1.2
 
 - First release

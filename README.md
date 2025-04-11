@@ -27,7 +27,7 @@ Available exporters:
 
 By default no exporter is enabled, you need to manually configure which one(s) you want to enable, example: `{:exporters {:stdout {:enabled? true}}}`.
 
-For all available exporters and their configs, check [here](./docs/all-exporters.edn).
+For all available exporters and their configs, check [here](./docs/all-configs.edn).
 
 ### Configuration
 
@@ -39,7 +39,7 @@ Metrepl supports a advancded configuration via the following waterfall, merging 
 4. config-file: searching from a local `.metrepl.edn` file.
 5. dynamic-var: the dynamic value in `metrepl.config/*config*`.
 
-Check all available configuration options in [metrepl.config](https://github.com/ericdallo/metrepl/blob/master/src/metrepl/config.clj#L14).
+Check all available configuration options in [all-configs.edn](docs/all-configs.edn) or [metrepl.config](https://github.com/ericdallo/metrepl/blob/master/src/metrepl/config.clj#L14).
 
 ## How to use
 
@@ -50,6 +50,10 @@ clojure -Sdeps "{:deps {nrepl/nrepl {:mvn/version \"1.3.1\"} dev.ericdallo/metre
 ```
 
 2. Configure to where export your metrics, example: `METREPL_CONFIG={:exporters {:file {:enabled? true :path "/tmp/foo.txt"}}}`
+
+### Error handler
+
+By default, any error on exporting is supressed, to configure that behavior you can set one or more `:error-handler` on config, check [all-configs.edn](docs/all-configs.edn)
 
 # Support 
 

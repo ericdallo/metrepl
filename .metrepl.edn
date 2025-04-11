@@ -1,1 +1,2 @@
-{:exporters {:stdout {:enabled? true}}}
+{:exporters {:stdout {:enabled? true}}
+ :error-handler {:stdout true}}

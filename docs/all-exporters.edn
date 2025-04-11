@@ -1,7 +1,0 @@
-{:stdout {:enabled? true
-          :format (:summary :edn :json)}
- :file {:enabled? false
-        :path "./metrepl.txt"
-        :format (:summary :edn :json)}
- :otlp {:enabled? false
-        :config {"otel.service.name" "metrepl"}}}

@@ -1,5 +1,6 @@
 (ns metrepl.exporters
   (:require
+   [clojure.java.io :as io]
    [metrepl.config :as config]
    [metrepl.exporters.file :as exporters.file]
    [metrepl.exporters.otlp :as exporters.otlp]
@@ -42,4 +43,8 @@
   (try
     (export!* metric data)
     (catch Exception e
-      (.printStackTrace e))))
+      (doseq [[handler cfg] (config/error-handler)]
+        (when (:enabled? cfg)
+          (case handler
+            :stdout (println "metrepl export error:" e)
+            :file (spit (io/file (:path cfg)) (str e "\n") :append true)))))))

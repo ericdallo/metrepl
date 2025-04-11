@@ -6,16 +6,15 @@
   3. env var: searching for a `METREPL_CONFIG` env var which should contains a valid edn config.
   4. config-file: searching from a local `.metrepl.edn` file.
   5. dynamic-var: the dynamic value in `metrepl.config/*config*`."
-  (:refer-clojure :exclude [get])
+  (:refer-clojure :exclude [get error-handler])
   (:require
    [clojure.edn :as edn]
    [clojure.java.io :as io]))
 
 (def initial-config
-  "Check `docs/all-metrics.edn` and `docs/all-exporters.edn` for
+  "Check `docs/all-metrics.edn` and `docs/all-configs.edn` for
    all available options."
-  {:metrics {:event/jvm-started {:level :info}
-             :event/first-op-requested {:level :info}
+  {:metrics {:event/first-op-requested {:level :info}
              :event/op-requested {:level :info}
              :event/op-completed {:level :info}}
    :exporters {:stdout {:enabled? false
@@ -24,7 +23,10 @@
                       :path "./metrepl.txt"
                       :format :summary}
                :otlp {:enabled? false
-                      :config {"otel.service.name" "metrepl"}}}})
+                      :config {"otel.service.name" "metrepl"}}}
+   :error-handler {:stdout {:enabled? false}
+                   :file {:enabled? false
+                          :path "./metrepl-error.txt"}}})
 
 (defn safe-read-edn-string [raw-string]
   (try
@@ -74,3 +76,6 @@
 
 (defn exporters []
   (get-in (all) [:exporters]))
+
+(defn error-handler []
+  (get-in (all) [:error-handler]))

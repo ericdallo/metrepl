@@ -8,15 +8,6 @@
 
 (defonce first-op-metrified?* (atom false))
 
-(defonce ^:private startup-jvm-uptime (.getUptime (ManagementFactory/getRuntimeMXBean)))
-
-;; Workaround to export the startup JVM time
-;; as close as possible to REPL ready to user.
-(defonce ^:private _export-startup-metric!!!
-  (metrics/metrify
-   :event/jvm-started
-   {:uptime-ms startup-jvm-uptime}))
-
 (defn wrap-op-metrics
   "Wrap all ops metrifying each one, emmiting these events:
    - `:event/first-op-requested` when receiving the first op.
@@ -28,7 +19,7 @@
       (reset! first-op-metrified?* true)
       (metrics/metrify :event/first-op-requested
                        {:op (:op msg)
-                        :time-since-startup-ms (- (.getUptime (ManagementFactory/getRuntimeMXBean)) startup-jvm-uptime)}))
+                        :startup-time-ms (.getUptime (ManagementFactory/getRuntimeMXBean))}))
     (metrics/metrify-op-task
      msg
      (fn [] (handler msg)))))

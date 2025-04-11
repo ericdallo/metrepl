@@ -1,0 +1,14 @@
+;; list of keywords means possible values, where the first is the default
+{:metrics {:event/first-op-requested {:level (:info :warn :error :debug :off)}
+           :event/op-requested {:level (:info :warn :error :debug :off)}
+           :event/op-completed {:level (:info :warn :error :debug :off)}}
+ :exporters {:stdout {:enabled? true
+                      :format (:summary :edn :json)}
+             :file {:enabled? false
+                    :path "./metrepl.txt"
+                    :format (:summary :edn :json)}
+             :otlp {:enabled? false
+                    :config {"otel.service.name" "metrepl"}}}
+ :error-handler {:stdout {:enabled? false}
+                 :file {:enabled? false
+                        :path "./metrepl-error.txt"}}}
