@@ -8,6 +8,7 @@
            "clone" (select-keys msg [:client-name :client-version])
            "load-file" (select-keys msg [:file-name :file-path])
            "eval" (select-keys msg [:ns])
+           "test" (select-keys msg [:ns :tests])
            nil)))
 
 (defn metrify [metric content]

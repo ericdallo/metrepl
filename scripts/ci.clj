@@ -35,3 +35,6 @@
 
 (defn deploy-clojars []
   (shell "clojure -T:build deploy-clojars"))
+
+(defn tests []
+  (shell "clojure -Mtest"))

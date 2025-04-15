@@ -16,7 +16,8 @@
    all available options."
   {:metrics {:event/first-op-requested {:level :info}
              :event/op-requested {:level :info}
-             :event/op-completed {:level :info}}
+             :event/op-completed {:level :info}
+             :event/test-executed {:level :info}}
    :exporters {:stdout {:enabled? false
                         :format :summary}
                :file {:enabled? false
