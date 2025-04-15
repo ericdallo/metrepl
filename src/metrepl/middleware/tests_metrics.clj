@@ -1,5 +1,6 @@
 (ns metrepl.middleware.tests-metrics
   (:require
+   [clojure.walk :as walk]
    [metrepl.metrics :as metrics]
    [nrepl.middleware :as middleware]
    [nrepl.transport :refer [Transport]]))
@@ -10,9 +11,9 @@
     (send [_ response]
       (when-let [summary (get response "summary")]
         (metrics/metrify :event/test-executed
-                         {:elapsed-time (get-in response ["elapsed-time" "ms"])
+                         {:elapsed-time-ms (get-in response ["elapsed-time" "ms"])
                           :ns (keys (get response "results"))
-                          :summary summary}))
+                          :summary (walk/keywordize-keys summary)}))
       (.send transport response))))
 
 (defn wrap-tests-metrics

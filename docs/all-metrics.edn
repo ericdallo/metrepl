@@ -5,4 +5,12 @@
  :event/op-completed {:op String
                       :time-ms Long
                       ,,, ;; extra fields for some ops
-                      }}
+                      }
+ :event/test-executed {:summary {:ns Integer
+                                 :var Integer
+                                 :test Integer
+                                 :pass Integer
+                                 :fail Integer
+                                 :error Integer}
+                       :ns [String]
+                       :elapsed-time-ms Long}}
