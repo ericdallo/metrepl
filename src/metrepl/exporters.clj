@@ -14,6 +14,7 @@
   {:os-name (System/getProperty "os.name")
    :os-version (System/getProperty "os.version")
    :os-arch (System/getProperty "os.arch")
+   :project-path (.getCanonicalPath (io/file ""))
    :hostname (try (.getHostName (java.net.InetAddress/getLocalHost))
                   (catch java.net.UnknownHostException _ nil))})
 
