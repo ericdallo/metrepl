@@ -17,7 +17,10 @@
   {:metrics {:event/first-op-requested {:level :info}
              :event/op-requested {:level :info}
              :event/op-completed {:level :info}
-             :event/test-executed {:level :info}}
+             :event/tests-executed {:level :info}
+             :event/test-passed {:level :info}
+             :event/test-failed {:level :info}
+             :event/test-errored {:level :info}}
    :exporters {:stdout {:enabled? false
                         :format :summary}
                :file {:enabled? false

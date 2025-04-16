@@ -2,7 +2,10 @@
 {:metrics {:event/first-op-requested {:level (:info :warn :error :debug :off)}
            :event/op-requested {:level (:info :warn :error :debug :off)}
            :event/op-completed {:level (:info :warn :error :debug :off)}
-           :event/test-executed {:level (:info :warn :error :debug :off)}}
+           :event/tests-executed {:level (:info :warn :error :debug :off)}
+           :event/test-passed {:level (:info :warn :error :debug :off)}
+           :event/test-failed {:level (:info :warn :error :debug :off)}
+           :event/test-errored {:level (:info :warn :error :debug :off)}}
  :exporters {:stdout {:enabled? true
                       :format (:summary :edn :json)}
              :file {:enabled? false

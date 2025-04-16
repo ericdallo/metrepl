@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## Unreleased
+
+- Add `event/test-passed`, `event/test-errored` and `event/test-failed` events.
+
+## 0.2.0
 
 - Improve export exception handler
 - Remove jvm started flaky metric

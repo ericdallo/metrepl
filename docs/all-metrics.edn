@@ -6,11 +6,26 @@
                       :time-ms Long
                       ,,, ;; extra fields for some ops
                       }
- :event/test-executed {:summary {:ns Integer
-                                 :var Integer
-                                 :test Integer
-                                 :pass Integer
-                                 :fail Integer
-                                 :error Integer}
-                       :ns [String]
-                       :elapsed-time-ms Long}}
+ :event/tests-executed {:summary {:ns Integer
+                                  :var Integer
+                                  :test Integer
+                                  :pass Integer
+                                  :fail Integer
+                                  :error Integer}
+                        :ns [String]
+                        :elapsed-time-ms Long}
+ :event/test-passed {:ns String
+                     :var String
+                     :file String
+                     :error String
+                     :context String}
+ :event/test-failed {:ns String
+                     :var String
+                     :file String
+                     :error String
+                     :context String}
+ :event/test-errored {:ns String
+                      :var String
+                      :file String
+                      :error String
+                      :context String}}
