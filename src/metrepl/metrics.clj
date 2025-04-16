@@ -1,6 +1,7 @@
 (ns metrepl.metrics
   (:require
-   [metrepl.exporters :as exporters]))
+   [metrepl.exporters :as exporters]
+   [metrepl.transport :as m.transport]))
 
 (defn ^:private msg->payload [{:keys [op] :as msg}]
   (merge {:op op}
@@ -15,12 +16,16 @@
   (exporters/export! {:metric metric
                       :payload content}))
 
-(defn metrify-op-task [msg handle-op-fn]
+(defn metrify-op-task [msg]
   (let [payload (msg->payload msg)
         _ (exporters/export! {:metric :event/op-requested
                               :payload payload})
-        start-time (System/currentTimeMillis)
-        _ (handle-op-fn)
-        end-time (- (System/currentTimeMillis) start-time)]
-    (exporters/export! {:metric :event/op-completed
-                        :payload (assoc payload :time-ms end-time)})))
+        start-time (System/currentTimeMillis)]
+    (m.transport/wrap
+     msg
+     {:on-before-send
+      (fn [response]
+        (when (contains? (:status response) :done)
+          (let [end-time (- (System/currentTimeMillis) start-time)]
+            (exporters/export! {:metric :event/op-completed
+                                :payload (assoc payload :time-ms end-time)}))))})))

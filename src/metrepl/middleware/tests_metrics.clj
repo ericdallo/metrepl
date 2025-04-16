@@ -2,26 +2,24 @@
   (:require
    [clojure.walk :as walk]
    [metrepl.metrics :as metrics]
-   [nrepl.middleware :as middleware]
-   [nrepl.transport :refer [Transport]]))
+   [metrepl.transport :as m.transport]
+   [nrepl.middleware :as middleware]))
 
-(defn ^:private handle-test [transport]
-  (reify Transport
-    (recv [_ timeout] (.recv transport timeout))
-    (send [_ response]
-      (when-let [summary (get response "summary")]
-        (metrics/metrify :event/test-executed
-                         {:elapsed-time-ms (get-in response ["elapsed-time" "ms"])
-                          :ns (keys (get response "results"))
-                          :summary (walk/keywordize-keys summary)}))
-      (.send transport response))))
+(defn ^:private handle-test [response]
+  (when-let [summary (some-> (get response "summary") walk/keywordize-keys)]
+    (let [results (get response "results")]
+      (metrics/metrify :event/test-executed
+                       {:elapsed-time-ms (get-in response ["elapsed-time" "ms"])
+                        :ns (keys results)
+                        :summary (walk/keywordize-keys summary)}))))
 
 (defn wrap-tests-metrics
-  "TODO"
+  "Wrap test related ops metrifying, emmiting these events:
+   - `:event/test-executed` when test finished successfully or failed."
   [handler]
-  (fn [{:keys [op transport] :as msg}]
+  (fn [{:keys [op] :as msg}]
     (if (= "test" op)
-      (handler (assoc msg :transport (handle-test transport)))
+      (handler (m.transport/wrap msg {:on-before-send handle-test}))
       (handler msg))))
 
 (middleware/set-descriptor!

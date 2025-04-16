@@ -20,9 +20,7 @@
       (metrics/metrify :event/first-op-requested
                        {:op (:op msg)
                         :startup-time-ms (.getUptime (ManagementFactory/getRuntimeMXBean))}))
-    (metrics/metrify-op-task
-     msg
-     (fn [] (handler msg)))))
+    (handler (metrics/metrify-op-task msg))))
 
 (middleware/set-descriptor!
  #'wrap-op-metrics
