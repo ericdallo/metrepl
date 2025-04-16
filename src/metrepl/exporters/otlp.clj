@@ -17,7 +17,7 @@
   (reset! otlp-logger-provider*
           (-> (AutoConfiguredOpenTelemetrySdk/builder)
               (.setResultAsGlobal)
-              (.addPropertiesCustomizer ^Function (constantly (or otlp-config {})))
+              (.addPropertiesCustomizer ^Function (constantly otlp-config))
               (.build)
               .getOpenTelemetrySdk
               .getSdkLoggerProvider)))

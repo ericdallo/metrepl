@@ -24,7 +24,9 @@
                       :path "./metrepl.txt"
                       :format :summary}
                :otlp {:enabled? false
-                      :config {"otel.service.name" "metrepl"}}}
+                      :config {"otel.service.name" "metrepl"
+                               "otel.metrics.exporter" "none"
+                               "otel.traces.exporter" "none"}}}
    :error-handler {:stdout {:enabled? false}
                    :file {:enabled? false
                           :path "./metrepl-error.txt"}}})
