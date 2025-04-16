@@ -1,7 +1,9 @@
 (ns metrepl.metrics
   (:require
    [metrepl.exporters :as exporters]
-   [metrepl.transport :as m.transport]))
+   [metrepl.transport :as m.transport])
+  (:import
+   [java.lang.management ManagementFactory]))
 
 (defn ^:private msg->payload [{:keys [op] :as msg}]
   (merge {:op op}
@@ -10,6 +12,7 @@
            "load-file" (select-keys msg [:file-name :file-path])
            "eval" (select-keys msg [:ns])
            "test" (select-keys msg [:ns :tests])
+           "close" {:session-time-ms (.getUptime (ManagementFactory/getRuntimeMXBean))}
            nil)))
 
 (defn metrify [metric content]

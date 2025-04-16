@@ -112,4 +112,20 @@
                                                     metric))))]
       (-> (metrics/metrify-op-task {:op "test" :ns "foo.bar" :tests ["bar-test" "baz"] :transport mock-transport})
           :transport
+          (.send {:status #{:done}}))))
+  (testing "close op"
+    (with-redefs [exporters/export! (fn [metric]
+                                      (case (:metric metric)
+                                        :event/op-requested
+                                        (is (match? {:metric :event/op-requested
+                                                     :payload {:op "close"
+                                                               :session-time-ms int?}}
+                                                    metric))
+                                        :event/op-completed
+                                        (is (match? {:metric :event/op-completed
+                                                     :payload {:op "close"
+                                                               :session-time-ms int?}}
+                                                    metric))))]
+      (-> (metrics/metrify-op-task {:op "close" :transport mock-transport})
+          :transport
           (.send {:status #{:done}})))))

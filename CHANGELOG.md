@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add `event/test-passed`, `event/test-errored` and `event/test-failed` events.
+- Add `session-time-ms` to `close` op.
 
 ## 0.2.0
 
