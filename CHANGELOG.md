@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## [Unreleased]
+
+## 0.3.0
 
 - Add `event/test-passed`, `event/test-errored` and `event/test-failed` events.
 - Add `session-time-ms` to `close` op.
