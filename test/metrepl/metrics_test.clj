@@ -1,23 +1,19 @@
 (ns metrepl.metrics-test
   (:require
-   [clojure.test :refer [deftest is testing use-fixtures]]
+   [clojure.test :refer [deftest is testing]]
    [matcher-combinators.test :refer [match?]]
    [metrepl.exporters :as exporters]
-   [metrepl.metrics :as metrics]))
+   [metrepl.metrics :as metrics]
+   [nrepl.transport :refer [Transport]]))
 
-(def op-handled*? (atom false))
-
-(defn ^:private reset-state! []
-  (reset! op-handled*? false))
-
-(use-fixtures :each (fn [test-f] (reset-state!) (test-f)))
-
-(defn handle-op-fn []
-  (reset! op-handled*? true))
+(def mock-transport
+  (reify Transport
+    (recv [_])
+    (recv [_ _])
+    (send [_ _])))
 
 (deftest metrify-op-task-test
   (testing "clone op"
-    (reset-state!)
     (with-redefs [exporters/export! (fn [metric]
                                       (case (:metric metric)
                                         :event/op-requested
@@ -33,8 +29,9 @@
                                                                :client-version "1.3.4"
                                                                :time-ms int?}}
                                                     metric))))]
-      (metrics/metrify-op-task {:op "clone" :client-name "Foo" :client-version "1.3.4"} handle-op-fn)
-      (is @op-handled*?)))
+      (-> (metrics/metrify-op-task {:op "clone" :client-name "Foo" :client-version "1.3.4" :transport mock-transport})
+          :transport
+          (.send {:status #{:done}}))))
   (testing "eval minimal op"
     (with-redefs [exporters/export! (fn [metric]
                                       (case (:metric metric)
@@ -46,8 +43,9 @@
                                         (is (match? {:metric :event/op-completed
                                                      :payload {:op "eval" :time-ms int?}}
                                                     metric))))]
-      (metrics/metrify-op-task {:op "eval" :code "(+ 1 2)"} handle-op-fn)
-      (is @op-handled*?)))
+      (-> (metrics/metrify-op-task {:op "eval" :code "(+ 1 2)" :transport mock-transport})
+          :transport
+          (.send {:status #{:done}}))))
   (testing "eval all op"
     (with-redefs [exporters/export! (fn [metric]
                                       (case (:metric metric)
@@ -62,8 +60,9 @@
                                                                :ns "foo.bar"
                                                                :time-ms int?}}
                                                     metric))))]
-      (metrics/metrify-op-task {:op "eval" :code "(+ 1 2)" :ns "foo.bar"} handle-op-fn)
-      (is @op-handled*?)))
+      (-> (metrics/metrify-op-task {:op "eval" :code "(+ 1 2)" :ns "foo.bar" :transport mock-transport})
+          :transport
+          (.send {:status #{:done}}))))
   (testing "load-file minimal op"
     (with-redefs [exporters/export! (fn [metric]
                                       (case (:metric metric)
@@ -75,8 +74,9 @@
                                         (is (match? {:metric :event/op-completed
                                                      :payload {:op "load-file" :time-ms int?}}
                                                     metric))))]
-      (metrics/metrify-op-task {:op "load-file" :file "(+ 1 2)"} handle-op-fn)
-      (is @op-handled*?)))
+      (-> (metrics/metrify-op-task {:op "load-file" :file "(+ 1 2)" :transport mock-transport})
+          :transport
+          (.send {:status #{:done}}))))
   (testing "load-file all op"
     (with-redefs [exporters/export! (fn [metric]
                                       (case (:metric metric)
@@ -91,15 +91,16 @@
                                                                :file-name "baz" :file-path "foo/bar/baz"
                                                                :time-ms int?}}
                                                     metric))))]
-      (metrics/metrify-op-task {:op "load-file" :file "(+ 1 2)" :file-name "baz" :file-path "foo/bar/baz"} handle-op-fn)
-      (is @op-handled*?)))
+      (-> (metrics/metrify-op-task {:op "load-file" :file "(+ 1 2)" :file-name "baz" :file-path "foo/bar/baz" :transport mock-transport})
+          :transport
+          (.send {:status #{:done}}))))
   (testing "test op"
     (with-redefs [exporters/export! (fn [metric]
                                       (case (:metric metric)
                                         :event/op-requested
                                         (is (match? {:metric :event/op-requested
                                                      :payload {:op "test"
-                                                                :ns "foo.bar"
+                                                               :ns "foo.bar"
                                                                :tests ["bar-test" "baz"]}}
                                                     metric))
                                         :event/op-completed
@@ -109,5 +110,6 @@
                                                                :tests ["bar-test" "baz"]
                                                                :time-ms int?}}
                                                     metric))))]
-      (metrics/metrify-op-task {:op "test" :ns "foo.bar" :tests ["bar-test" "baz"]} handle-op-fn)
-      (is @op-handled*?))))
+      (-> (metrics/metrify-op-task {:op "test" :ns "foo.bar" :tests ["bar-test" "baz"] :transport mock-transport})
+          :transport
+          (.send {:status #{:done}})))))
