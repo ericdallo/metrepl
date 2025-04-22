@@ -25,6 +25,9 @@ This is useful to have metrics about the REPL usage and understand how users are
                           :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware metrepl/middleware]"]}}}
 ```
 
+3. After starting and using your nREPL, you should see metrics being printed to stdout:
+![](./docs/demo.png)
+
 ## Concepts
 
 ### Metrics
