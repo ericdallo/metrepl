@@ -9,10 +9,10 @@ _Metrics of your Clojure nREPL_
 Metrepl is a [nREPL middleware](https://nrepl.org/nrepl/design/middleware.html) that get metrics about your REPL usage (startup time, ops, eval, load-file, errors, client info and more) and export to multiple configurable places. 
 This is useful to have metrics about the REPL usage and understand how users are using its features, if they are facing a specific problem, slowness.
 
-## Quick getting started
+## Getting started
 
 1. `echo '{:exporters {:stdout {:enabled? true}}}' > .metrepl.edn` - create a metrepl config in your project (there are other ways to configure, check [configuration](#configuration))
-2. Add metrepl middleware
+2. Add metrepl middleware:
    - Leiningen: Add in your `project.clj` or `~/.lein/profiles.clj`:
 ```clojure
    :repl {:dependencies [[dev.ericdallo/metrepl "x.y.z"]]
@@ -59,16 +59,6 @@ Metrepl supports a advancded configuration via the following waterfall, merging 
 5. dynamic-var: the dynamic value in `metrepl.config/*config*`.
 
 Check all available configuration options in [all-configs.edn](docs/all-configs.edn) or [metrepl.config](https://github.com/ericdallo/metrepl/blob/master/src/metrepl/config.clj#L14).
-
-## How to use
-
-1. Add the `metrepl/middleware` middleware to your repl, there are multiple ways to achieve that depending on `lein` or `deps.edn` projects for example, example of starting a REPL with metrepl middleware:
-
-```sh
-clojure -Sdeps "{:deps {nrepl/nrepl {:mvn/version \"1.3.1\"} dev.ericdallo/metrepl {:mvn/version \"x.y.z\"}} :aliases {:start/nrepl {:main-opts [\"-m\" \"nrepl.cmdline\" \"--middleware\" \"[metrepl/middleware]\"]}}}" -M:start/nrepl
-```
-
-2. Configure to where export your metrics, example: `METREPL_CONFIG={:exporters {:file {:enabled? true :path "/tmp/foo.txt"}}}`
 
 ### Error handler
 
