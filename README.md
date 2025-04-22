@@ -9,6 +9,22 @@ _Metrics of your Clojure nREPL_
 Metrepl is a [nREPL middleware](https://nrepl.org/nrepl/design/middleware.html) that get metrics about your REPL usage (startup time, ops, eval, load-file, errors, client info and more) and export to multiple configurable places. 
 This is useful to have metrics about the REPL usage and understand how users are using its features, if they are facing a specific problem, slowness.
 
+## Quick getting started
+
+1. `echo '{:exporters {:stdout {:enabled? true}}}' > .metrepl.edn` - create a metrepl config in your project (there are other ways to configure, check [configuration](#configuration))
+2. Add metrepl middleware
+   - Leiningen: Add in your `project.clj` or `~/.lein/profiles.clj`:
+   ```clojure
+   :repl {:dependencies [[dev.ericdallo/metrepl "x.y.z"]]
+          :repl-options {:nrepl-middleware [metrepl.middleware.op-metrics/wrap-op-metrics
+                                            metrepl.middleware.tests-metrics/wrap-tests-metrics]}}
+   ```
+   - Clojure: Add in your `deps.edn` or `~/.clojure/deps.edn`
+   ```clojure
+ {:aliases {:cider/nrepl {:extra-deps {dev.ericdallo/metrepl {:mvn/version "x.y.z"}}
+                          :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware metrepl/middleware]"]}}}
+   ```
+
 ## Concepts
 
 ### Metrics
