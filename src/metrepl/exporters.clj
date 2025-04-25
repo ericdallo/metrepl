@@ -6,9 +6,10 @@
    [metrepl.exporters.otlp :as exporters.otlp]
    [metrepl.exporters.stdout :as exporters.stdout])
   (:import
-   [java.time Instant]))
+   [java.time Instant]
+   [java.util UUID]))
 
-(defonce ^:private correlation-id (str (random-uuid)))
+(defonce ^:private correlation-id (str (UUID/randomUUID)))
 
 (defn ^:private system-data* []
   {:os-name (System/getProperty "os.name")

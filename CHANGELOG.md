@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add compatibility with older Clojure versions
+
 ## 0.3.0
 
 - Add `event/test-passed`, `event/test-errored` and `event/test-failed` events.
