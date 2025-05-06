@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.3.3
+
 - Fix read config from classpath
 
 ## 0.3.2
