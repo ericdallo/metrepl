@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fix read config from classpath
+
 ## 0.3.2
 
 - Add compatibility with older opentelemetry versions.

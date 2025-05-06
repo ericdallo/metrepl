@@ -46,7 +46,9 @@
   {})
 
 (defn ^:private config-from-classpath* []
-  (io/resource "metrepl.exports/config.edn"))
+  (some-> (io/resource "metrepl.exports/config.edn")
+          slurp
+          safe-read-edn-string))
 
 (def ^:private config-from-classpath (memoize config-from-classpath*))
 
