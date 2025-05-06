@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## Unreleased
 
 - Fix read config from classpath
 

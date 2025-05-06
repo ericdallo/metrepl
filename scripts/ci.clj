@@ -12,8 +12,8 @@
   (replace-in-file "CHANGELOG.md"
                    #"## Unreleased"
                    (if comment
-                     (format "## [Unreleased]\n\n## %s\n\n- %s" tag comment)
-                     (format "## [Unreleased]\n\n## %s" tag))))
+                     (format "## Unreleased\n\n## %s\n\n- %s" tag comment)
+                     (format "## Unreleased\n\n## %s" tag))))
 
 (defn jar []
   (shell "clojure -T:build jar"))
