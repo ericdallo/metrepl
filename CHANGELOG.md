@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## Unreleased
+
+- Add compatibility with older opentelemetry versions.
+
+## 0.3.1
 
 - Add compatibility with older Clojure versions
 
