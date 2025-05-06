@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## [Unreleased]
+
+## 0.3.2
 
 - Add compatibility with older opentelemetry versions.
 
