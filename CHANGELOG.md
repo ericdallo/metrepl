@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.3.4
+
 - Fix OpenTelemetry integration race condition corner case.
 
 ## 0.3.3
