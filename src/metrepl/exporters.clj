@@ -47,6 +47,7 @@
     (catch Exception e
       (doseq [[handler cfg] (config/error-handler)]
         (when (:enabled? cfg)
-          (case handler
-            :stdout (println "metrepl export error:" e)
-            :file (spit (io/file (:path cfg)) (str e "\n") :append true)))))))
+          (let [msg (str (with-out-str (binding [*err* *out*] (.printStackTrace e))) "\n")]
+            (case handler
+              :stdout (println "metrepl export error:" msg)
+              :file (spit (io/file (:path cfg)) msg :append true))))))))

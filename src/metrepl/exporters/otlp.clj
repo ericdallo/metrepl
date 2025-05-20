@@ -16,7 +16,6 @@
 (defn ^:private setup-logger [otlp-config]
   (reset! otlp-logger-provider*
           (-> (AutoConfiguredOpenTelemetrySdk/builder)
-              (.setResultAsGlobal)
               (.addPropertiesCustomizer (reify Function (apply [_ _]
                                                           otlp-config)))
               (.build)

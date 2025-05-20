@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix OpenTelemetry integration race condition corner case.
+
 ## 0.3.3
 
 - Fix read config from classpath
