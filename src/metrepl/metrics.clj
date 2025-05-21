@@ -5,7 +5,8 @@
    [clojure.string :as string]
    [metrepl.config :as config]
    [metrepl.exporters :as exporters]
-   [metrepl.transport :as m.transport])
+   [metrepl.transport :as m.transport]
+   [nrepl.middleware.dynamic-loader :as nrepl.dynamic-loader])
   (:import
    [java.lang.management ManagementFactory]
    [java.util.jar JarFile]))
@@ -77,4 +78,5 @@
                                   (classpath/classpath-jarfiles))]
                 {:startup-time-ms startup-time-ms
                  :project-types project-types
+                 :middlewares (mapv #(subs (str %) 2) (:stack @nrepl.dynamic-loader/*state*))
                  :dependencies dependencies}))))

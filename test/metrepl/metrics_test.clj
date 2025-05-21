@@ -80,7 +80,6 @@
           :transport
           (.send {:status #{:done}}))))
   (testing "load-file all op"
-    (reset! metrics/first-load-file?* false)
     (with-redefs [exporters/export! (fn [metric]
                                       (case (:metric metric)
                                         :event/op-requested
@@ -142,6 +141,7 @@
                                       (is (match? {:metric :info/repl-ready
                                                    :payload {:startup-time-ms 123
                                                              :project-types ["deps" "babashka"]
+                                                             :middlewares (matchers/embeds ["metrepl.middleware.op-metrics/wrap-op-metrics"])
                                                              :dependencies {"org.clojure/clojure" "1.12.0"}}}
                                                   metric))))]
     (metrics/metrify-repl-ready 123)))
