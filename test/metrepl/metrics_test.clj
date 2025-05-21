@@ -1,6 +1,7 @@
 (ns metrepl.metrics-test
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.matchers :as matchers]
    [matcher-combinators.test :refer [match?]]
    [metrepl.exporters :as exporters]
    [metrepl.metrics :as metrics]
@@ -64,30 +65,34 @@
           :transport
           (.send {:status #{:done}}))))
   (testing "load-file minimal op"
+    (reset! metrics/first-load-file?* true)
     (with-redefs [exporters/export! (fn [metric]
                                       (case (:metric metric)
                                         :event/op-requested
                                         (is (match? {:metric :event/op-requested
-                                                     :payload {:op "load-file"}}
+                                                     :payload {:op "load-file" :first-time true}}
                                                     metric))
                                         :event/op-completed
                                         (is (match? {:metric :event/op-completed
-                                                     :payload {:op "load-file" :time-ms int?}}
+                                                     :payload {:op "load-file" :time-ms int? :first-time true}}
                                                     metric))))]
       (-> (metrics/metrify-op-task {:op "load-file" :file "(+ 1 2)" :transport mock-transport})
           :transport
           (.send {:status #{:done}}))))
   (testing "load-file all op"
+    (reset! metrics/first-load-file?* false)
     (with-redefs [exporters/export! (fn [metric]
                                       (case (:metric metric)
                                         :event/op-requested
                                         (is (match? {:metric :event/op-requested
                                                      :payload {:op "load-file"
+                                                               :first-time matchers/absent
                                                                :file-name "baz" :file-path "foo/bar/baz"}}
                                                     metric))
                                         :event/op-completed
                                         (is (match? {:metric :event/op-completed
                                                      :payload {:op "load-file"
+                                                               :first-time matchers/absent
                                                                :file-name "baz" :file-path "foo/bar/baz"
                                                                :time-ms int?}}
                                                     metric))))]
@@ -129,3 +134,14 @@
       (-> (metrics/metrify-op-task {:op "close" :transport mock-transport})
           :transport
           (.send {:status #{:done}})))))
+
+(deftest metrify-repl-ready-test
+  (with-redefs [exporters/export! (fn [metric]
+                                    (case (:metric metric)
+                                      :info/repl-ready
+                                      (is (match? {:metric :info/repl-ready
+                                                   :payload {:startup-time-ms 123
+                                                             :project-types ["deps" "babashka"]
+                                                             :dependencies {"org.clojure/clojure" "1.12.0"}}}
+                                                  metric))))]
+    (metrics/metrify-repl-ready 123)))

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Replace `event/first-op-requested` with `info/repl-ready` adding more info about the project.
+- Add `:first-time` to `:event/op-completed` and `:event/op-requested` when op is `load-file` and first time processing it.
+
 ## 0.3.4
 
 - Fix OpenTelemetry integration race condition corner case.

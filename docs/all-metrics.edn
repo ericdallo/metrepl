@@ -1,4 +1,6 @@
-{:event/first-op-requested {:op String}
+{:info/repl-ready {:startup-time-ms Long
+                   :project-types [String]
+                   :dependencies {String String}}
  :event/op-requested {:op String
                       ,,, ;; extra fields for some ops
                       }

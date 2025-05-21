@@ -1,5 +1,5 @@
 ;; list of keywords means possible values, where the first is the default
-{:metrics {:event/first-op-requested {:level (:info :warn :error :debug :off)}
+{:metrics {:info/repl-ready {:level (:info :warn :error :debug :off)}
            :event/op-requested {:level (:info :warn :error :debug :off)}
            :event/op-completed {:level (:info :warn :error :debug :off)}
            :event/tests-executed {:level (:info :warn :error :debug :off)}

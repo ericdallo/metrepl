@@ -42,12 +42,4 @@
             nil))))))
 
 (defn export! [{:keys [metric] :as data}]
-  (try
-    (export!* metric data)
-    (catch Exception e
-      (doseq [[handler cfg] (config/error-handler)]
-        (when (:enabled? cfg)
-          (let [msg (str (with-out-str (binding [*err* *out*] (.printStackTrace e))) "\n")]
-            (case handler
-              :stdout (println "metrepl export error:" msg)
-              :file (spit (io/file (:path cfg)) msg :append true))))))))
+  (export!* metric data))

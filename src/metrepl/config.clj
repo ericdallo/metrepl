@@ -14,7 +14,7 @@
 (def initial-config
   "Check `docs/all-metrics.edn` and `docs/all-configs.edn` for
    all available options."
-  {:metrics {:event/first-op-requested {:level :info}
+  {:metrics {:info/repl-ready {:level :info}
              :event/op-requested {:level :info}
              :event/op-completed {:level :info}
              :event/tests-executed {:level :info}
