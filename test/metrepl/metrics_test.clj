@@ -140,7 +140,7 @@
                                       :info/repl-ready
                                       (is (match? {:metric :info/repl-ready
                                                    :payload {:startup-time-ms 123
-                                                             :project-types ["deps" "babashka"]
+                                                             :project-types (matchers/in-any-order ["deps" "babashka"])
                                                              :middlewares (matchers/embeds ["metrepl.middleware.op-metrics/wrap-op-metrics"])
                                                              :dependencies {"org.clojure/clojure" "1.12.0"}}}
                                                   metric))))]
