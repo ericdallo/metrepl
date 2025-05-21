@@ -78,5 +78,5 @@
                                   (classpath/classpath-jarfiles))]
                 {:startup-time-ms startup-time-ms
                  :project-types project-types
-                 :middlewares (mapv #(subs (str %) 2) (:stack @nrepl.dynamic-loader/*state*))
+                 :middlewares (some->> nrepl.dynamic-loader/*state* deref :stack (mapv #(subs (str %) 2)))
                  :dependencies dependencies}))))
