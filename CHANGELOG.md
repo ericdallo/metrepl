@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.1
+
 - Bump opentelemetry to 1.51.0.
 
 ## 0.4.0

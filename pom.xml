@@ -4,7 +4,7 @@
   <packaging>jar</packaging>
   <groupId>dev.ericdallo</groupId>
   <artifactId>metrepl</artifactId>
-  <version>0.4.0</version>
+  <version>0.4.1</version>
   <name>metrepl</name>
   <licenses>
     <license>
@@ -22,12 +22,12 @@
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-api</artifactId>
-      <version>1.37.0</version>
+      <version>1.51.0</version>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-extension-autoconfigure</artifactId>
-      <version>1.37.0</version>
+      <version>1.51.0</version>
     </dependency>
     <dependency>
       <groupId>nrepl</groupId>
@@ -37,7 +37,7 @@
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-exporter-otlp</artifactId>
-      <version>1.37.0</version>
+      <version>1.51.0</version>
     </dependency>
     <dependency>
       <groupId>metosin</groupId>
