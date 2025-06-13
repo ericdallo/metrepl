@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Bump opentelemetry to 1.51.0.
+
 ## 0.4.0
 
 - Replace `event/first-op-requested` with `info/repl-ready` adding more info about the project.
