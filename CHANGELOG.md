@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.2
+
 - Bump nrepl to 1.5.0
 
 ## 0.4.1
