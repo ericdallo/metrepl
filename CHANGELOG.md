@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- [#1](https://github.com/ericdallo/metrepl/pull/1) Enable exporting metrics from `otlp` exporter. 
+
 ## 0.4.2
 
 - Bump nrepl to 1.5.0

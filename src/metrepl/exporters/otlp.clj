@@ -3,24 +3,22 @@
    [clojure.string :as string]
    [metrepl.format :as format])
   (:import
-   [io.opentelemetry.api.common AttributeKey]
+   [io.opentelemetry.api.common AttributeKey Attributes]
    [io.opentelemetry.api.logs Severity]
+   [io.opentelemetry.sdk OpenTelemetrySdk]
    [io.opentelemetry.sdk.autoconfigure AutoConfiguredOpenTelemetrySdk]
-   [io.opentelemetry.sdk.logs SdkLoggerProvider]
    [java.util.function Function]))
 
 (set! *warn-on-reflection* true)
 
-(defonce otlp-logger-provider* (atom nil))
+(defonce ^:private otlp-provider* (atom nil))
 
-(defn ^:private setup-logger [otlp-config]
-  (reset! otlp-logger-provider*
+(defn ^:private setup-sdk [otel-config]
+  (reset! otlp-provider*
           (-> (AutoConfiguredOpenTelemetrySdk/builder)
-              (.addPropertiesCustomizer (reify Function (apply [_ _]
-                                                          otlp-config)))
+              (.addPropertiesCustomizer ^Function (constantly otel-config))
               (.build)
-              .getOpenTelemetrySdk
-              .getSdkLoggerProvider)))
+              .getOpenTelemetrySdk)))
 
 (defn ^:private ->severity [level]
   (case level
@@ -30,21 +28,38 @@
     :error Severity/ERROR
     Severity/INFO))
 
-(defn ^:private ->raw-value [value]
-  (cond
-    (keyword? value) (string/join "" (drop 1 (str value)))
-    (number? value) value
-    (boolean? value) value
-    :else (str value)))
+(defn ^:private ->attributes
+  [m]
+  (let [builder (Attributes/builder)]
+    (doseq [[k v] m
+            :let [value (cond
+                          (keyword? v) (string/join "" (drop 1 (str v)))
+                          (number? v) v
+                          (boolean? v) v
+                          :else (str v))]]
+      (.put builder (AttributeKey/stringKey (name k)) value))
+    (.build builder)))
 
-(defn export! [data _metric-cfg {:keys [config]}]
-  (when-not @otlp-logger-provider*
-    (setup-logger config))
-  (let [log-record-builder (-> (.get ^SdkLoggerProvider @otlp-logger-provider* (str *ns*))
+(defn export!
+  [{:keys [payload level timestamp] :as data {:keys [op]} :payload} _metric-cfg {:keys [config]}]
+  (when-not @otlp-provider*
+    (setup-sdk config))
+  (let [^OpenTelemetrySdk sdk @otlp-provider*
+        base-atrributes (dissoc data :timestamp :level :payload)
+        log-attributes (->attributes base-atrributes)
+        log-record-builder (-> (.getSdkLoggerProvider sdk)
+                               (.get (str *ns*))
                                (.logRecordBuilder)
-                               (.setBody (format/parse-data (:payload data) :json))
-                               (.setSeverity (->severity (:level data)))
-                               (.setTimestamp (:timestamp data)))]
-    (doseq [[field value] (dissoc data :timestamp :level :payload)]
-      (.setAttribute log-record-builder (AttributeKey/stringKey (name field)) (->raw-value value)))
-    (.emit log-record-builder)))
+                               (.setBody (format/parse-data payload :json))
+                               (.setSeverity (->severity level))
+                               (.setTimestamp timestamp)
+                               (.setAllAttributes log-attributes))
+        long-counter (-> (.getSdkMeterProvider sdk)
+                         (.get (str *ns*))
+                         (.counterBuilder "metrepl.events.total")
+                         (.setUnit "events")
+                         (.setDescription "Total number of REPL events")
+                         (.build))
+        metric-attributes (->attributes (cond-> base-atrributes op (assoc :operation op)))]
+    (.emit log-record-builder)
+    (.add long-counter 1 metric-attributes)))
