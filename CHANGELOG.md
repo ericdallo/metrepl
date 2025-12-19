@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.5.0
+
 - [#1](https://github.com/ericdallo/metrepl/pull/1) Enable exporting metrics from `otlp` exporter. 
 
 ## 0.4.2
