@@ -5,8 +5,7 @@
    [clojure.string :as string]
    [metrepl.config :as config]
    [metrepl.exporters :as exporters]
-   [metrepl.transport :as m.transport]
-   [nrepl.middleware.dynamic-loader :as nrepl.dynamic-loader])
+   [metrepl.transport :as m.transport])
   (:import
    [java.lang.management ManagementFactory]
    [java.util.jar JarFile]))
@@ -64,7 +63,7 @@
    "build.gradle" "gradle"
    "build.gradle.kts" "gradle"})
 
-(defn metrify-repl-ready [startup-time-ms]
+(defn metrify-repl-ready [startup-time-ms middlewares]
   (metrify* :info/repl-ready
             (fn []
               (let [project-types (vec (keep
@@ -78,5 +77,5 @@
                                   (classpath/classpath-jarfiles))]
                 {:startup-time-ms startup-time-ms
                  :project-types project-types
-                 :middlewares (some->> nrepl.dynamic-loader/*state* deref :stack (mapv #(subs (str %) 2)))
+                 :middlewares middlewares
                  :dependencies dependencies}))))
