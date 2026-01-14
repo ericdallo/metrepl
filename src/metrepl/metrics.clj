@@ -16,6 +16,7 @@
   (merge {:op op}
          (case op
            "clone" (select-keys msg [:client-name :client-version])
+           "describe" (select-keys msg [:middleware])
            "load-file" (cond-> (select-keys msg [:file-name :file-path])
                          @first-load-file?* (assoc :first-time true))
            "eval" (select-keys msg [:ns])
@@ -63,7 +64,7 @@
    "build.gradle" "gradle"
    "build.gradle.kts" "gradle"})
 
-(defn metrify-repl-ready [startup-time-ms middlewares]
+(defn metrify-repl-ready [startup-time-ms]
   (metrify* :info/repl-ready
             (fn []
               (let [project-types (vec (keep
@@ -77,5 +78,4 @@
                                   (classpath/classpath-jarfiles))]
                 {:startup-time-ms startup-time-ms
                  :project-types project-types
-                 :middlewares middlewares
                  :dependencies dependencies}))))

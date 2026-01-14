@@ -5,6 +5,8 @@
    [matcher-combinators.test :refer [match?]]
    [metrepl.exporters :as exporters]
    [metrepl.metrics :as metrics]
+   [metrepl.middleware.op-metrics :as op-metrics]
+   [nrepl.middleware.dynamic-loader :as nrepl.dynamic-loader]
    [nrepl.transport :refer [Transport]]))
 
 (def mock-transport
@@ -135,12 +137,13 @@
           (.send {:status #{:done}})))))
 
 (deftest metrify-repl-ready-test
-  (with-redefs [exporters/export! (fn [metric]
+  (with-redefs [nrepl.dynamic-loader/*state* (atom {:stack [#'op-metrics/wrap-op-metrics]})
+                exporters/export! (fn [metric]
                                     (case (:metric metric)
                                       :info/repl-ready
                                       (is (match? {:metric :info/repl-ready
                                                    :payload {:startup-time-ms 123
                                                              :project-types (matchers/in-any-order ["deps" "babashka"])
-                                                             :middlewares ["metrepl.middleware.op-metrics/wrap-op-metrics"]}}
+                                                             :middlewares (matchers/embeds ["metrepl.middleware.op-metrics/wrap-op-metrics"])}}
                                                   metric))))]
-    (metrics/metrify-repl-ready 123 ["metrepl.middleware.op-metrics/wrap-op-metrics"])))
+    (metrics/metrify-repl-ready 123)))
