@@ -134,7 +134,25 @@
                                                     metric))))]
       (-> (metrics/metrify-op-task {:op "close" :transport mock-transport})
           :transport
-          (.send {:status #{:done}})))))
+          (.send {:status #{:done}}))))
+  (testing "describe op"
+    (with-redefs [exporters/export! (fn [metric]
+                                      (case (:metric metric)
+                                        :event/op-requested
+                                        (is (match? {:metric :event/op-requested
+                                                     :payload {:op "describe"}}
+                                                    metric))
+                                        :event/op-completed
+                                        (is (match? {:metric :event/op-completed
+                                                     :payload {:op "describe"
+                                                               :middleware ["some-middleware"]
+                                                               :time-ms int?}}
+                                                    metric))))]
+      (-> (metrics/metrify-op-task {:op "describe"
+                                    :transport mock-transport})
+          :transport
+          (.send {:status #{:done}
+                  :middleware ["some-middleware"]})))))
 
 (deftest metrify-repl-ready-test
   (with-redefs [nrepl.dynamic-loader/*state* (atom {:stack [#'op-metrics/wrap-op-metrics]})
@@ -143,7 +161,6 @@
                                       :info/repl-ready
                                       (is (match? {:metric :info/repl-ready
                                                    :payload {:startup-time-ms 123
-                                                             :project-types (matchers/in-any-order ["deps" "babashka"])
-                                                             :middlewares (matchers/embeds ["metrepl.middleware.op-metrics/wrap-op-metrics"])}}
+                                                             :project-types (matchers/in-any-order ["deps" "babashka"])}}
                                                   metric))))]
     (metrics/metrify-repl-ready 123)))

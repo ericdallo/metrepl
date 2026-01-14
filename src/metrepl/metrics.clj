@@ -5,15 +5,14 @@
    [clojure.string :as string]
    [metrepl.config :as config]
    [metrepl.exporters :as exporters]
-   [metrepl.transport :as m.transport]
-   [nrepl.middleware.dynamic-loader :as nrepl.dynamic-loader])
+   [metrepl.transport :as m.transport])
   (:import
    [java.lang.management ManagementFactory]
    [java.util.jar JarFile]))
 
 (defonce first-load-file?* (atom true))
 
-(defn ^:private msg->payload [{:keys [op] :as msg}]
+(defn ^:private msg->initial-payload [{:keys [op] :as msg}]
   (merge {:op op}
          (case op
            "clone" (select-keys msg [:client-name :client-version])
@@ -23,6 +22,15 @@
            "test" (select-keys msg [:ns :tests])
            "close" {:session-time-ms (.getUptime (ManagementFactory/getRuntimeMXBean))}
            nil)))
+
+(defn ^:private initial-payload->final-payload [initial-payload response end-time]
+  (cond-> initial-payload
+
+    (and (= "describe" (:op initial-payload)) (get response :middleware))
+    (assoc :middleware (vec (get response :middleware)))
+
+    :always
+    (assoc :time-ms end-time)))
 
 (defn metrify* [metric content-fn]
   (try
@@ -40,8 +48,8 @@
   (metrify* metric (constantly content)))
 
 (defn metrify-op-task [msg]
-  (let [payload (msg->payload msg)
-        _ (metrify :event/op-requested payload)
+  (let [initial-payload (msg->initial-payload msg)
+        _ (metrify :event/op-requested initial-payload)
         start-time (System/currentTimeMillis)]
     (when (and (= "load-file" (:op msg))
                @first-load-file?*)
@@ -51,8 +59,9 @@
      {:on-before-send
       (fn [response]
         (when (contains? (:status response) :done)
-          (let [end-time (- (System/currentTimeMillis) start-time)]
-            (metrify :event/op-completed (assoc payload :time-ms end-time)))))})))
+          (let [end-time (- (System/currentTimeMillis) start-time)
+                final-payload (initial-payload->final-payload initial-payload response end-time)]
+            (metrify :event/op-completed final-payload))))})))
 
 (def ^:private type-by-file
   {"project.clj" "lein"
@@ -78,5 +87,4 @@
                                   (classpath/classpath-jarfiles))]
                 {:startup-time-ms startup-time-ms
                  :project-types project-types
-                 :middlewares (some->> nrepl.dynamic-loader/*state* deref :stack (mapv #(subs (str %) 2)))
                  :dependencies dependencies}))))
