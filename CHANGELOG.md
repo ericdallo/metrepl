@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.5.2
+
 - Add missing `org.clojure/java.classpath` dependency to fix REPL startup errors in minimal projects.
 
 ## 0.5.1
