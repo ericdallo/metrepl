@@ -1,7 +1,7 @@
 (ns metrepl.format
   (:require
-   [clojure.string :as string]
-   [jsonista.core :as j]))
+   [charred.api :as json]
+   [clojure.string :as string]))
 
 (defn ^:private ->summary [data]
   (format "%s %s %s [%s] - %s"
@@ -15,7 +15,7 @@
   (pr-str (update data :timestamp str)))
 
 (defn ^:private ->json [data]
-  (j/write-value-as-string data))
+  (json/write-json-str data :escape-slash false))
 
 (defn parse-data ^String [data format]
   (case format
